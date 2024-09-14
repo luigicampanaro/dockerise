@@ -1,0 +1,29 @@
+version: "3.9"
+services:
+  my_service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev_vscode
+      args:
+        USERNAME: ${USERNAME}
+        UID: ${UID}
+        GID: ${GID}
+        MAIN_FOLDER_NAME: ${MAIN_FOLDER_NAME}
+    container_name: "${MAIN_FOLDER_NAME}_container"
+    image: "${MAIN_FOLDER_NAME}:v1.0"
+    network_mode: "host"
+    tty: true
+    volumes:
+     - "../src:/${MAIN_FOLDER_NAME}/src"
+     - "../data:/${MAIN_FOLDER_NAME}/data"
+     - "../logs:/${MAIN_FOLDER_NAME}/logs"
+     - /tmp/.X11-unix:/tmp/.X11-unix:rw
+     - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+    working_dir: "/${MAIN_FOLDER_NAME}"
+    environment:
+     - NVIDIA_VISIBLE_DEVICES=all
+     - DISPLAY=${DISPLAY}
+     - QT_X11_NO_MITSHM=1
+    runtime: nvidia
+    command: /bin/bash

@@ -9,91 +9,74 @@ ARG USERNAME
 ARG UID
 ARG GID
 
-# Create directories using the argument
-RUN mkdir -p "${MAIN_FOLDER_NAME}/src" \
-    "${MAIN_FOLDER_NAME}/data" \
-    "${MAIN_FOLDER_NAME}/logs"
-
-# Set the working directory to MAIN_FOLDER_NAME
-WORKDIR "/${MAIN_FOLDER_NAME}"
-
 # Set the shell to /bin/bash for running commands with Bash syntax and features, instead of sh
 SHELL ["/bin/bash", "-c"]
 
-# Set the environment variable to prevent interactive prompts during package installation
+# Set environment variable to prevent interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Basic install for runtime only
+# Create a non-root user with the home directory in /home/${USERNAME}
+RUN apt-get update \
+    && apt-get install -y sudo \
+    && addgroup --gid ${GID} ${USERNAME} \
+    && adduser --disabled-password --gecos '' --uid ${UID} --gid ${GID} --home "/home/${USERNAME}" "${USERNAME}" \
+    && echo "${USERNAME} ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/${USERNAME} \
+    && mkdir -p "/home/${USERNAME}/${MAIN_FOLDER_NAME}/src" \
+    "/home/${USERNAME}/${MAIN_FOLDER_NAME}/data" \
+    "/home/${USERNAME}/${MAIN_FOLDER_NAME}/logs" \
+    && chown -R ${UID}:${GID} "/home/${USERNAME}"
+
+# Install basic utilities for runtime
 RUN apt-get update \
    && apt-get -y install \
    git \
+   vim \
+   htop \
    && rm -rf /var/lib/apt/lists/*
 
+# Set the PATH environment variable globally for all users
+ENV PATH="/home/${USERNAME}/.local/bin:$PATH"
+
+# Switch to the non-root user
+USER "${USERNAME}"
+
+# Install PDM for Python package management
+RUN pip install --user pdm
+
+# Set the working directory to the main project folder (inside the user home directory)
+WORKDIR "/home/${USERNAME}/${MAIN_FOLDER_NAME}"
 
 #####################
 # Development image #
 #####################
 FROM base as dev
 
-# Getting host's env variables at build time and storing them as ARGs
-ARG MAIN_FOLDER_NAME
-ARG USERNAME
-ARG UID
-ARG GID
-
-# Set the environment variable to prevent interactive prompts during package installation
-ENV DEBIAN_FRONTEND=noninteractive
-
-# Installing basic libraries
-RUN apt-get update \
-   && apt-get install -y \
+# Install development tools
+RUN sudo apt-get update \
+   && sudo apt-get install -y \
    gdb \
    grep \
-   htop \
    tmux \
-   vim \
-   && rm -rf /var/lib/apt/lists/*
+   && sudo rm -rf /var/lib/apt/lists/*
 
-# TODO: Add all the vscode install
-
-# Install sudo and create a non-root user
-RUN apt-get update \
-   && apt-get install -y sudo \
-   && rm -rf /var/lib/apt/lists/* \
-   && addgroup --gid ${GID} ${USERNAME} \
-   && adduser --disabled-password --gecos '' --uid ${UID} --gid ${GID} "${USERNAME}" \
-   && echo ${USERNAME} ALL=\(root\) NOPASSWD:ALL > "/etc/sudoers.d/${USERNAME}" \
-   && chown -R ${UID}:${GID} "/${MAIN_FOLDER_NAME}"
+# Update apt under the new user
+RUN sudo apt-get update
 
 # Allowing for interactions
 ENV DEBIAN_FRONTEND=dialog
 
-# switches the active user from the default root user to the user specified by the developer user
-USER "${USERNAME}"
-
-RUN sudo apt-get update
-
 #####################
-# Development image #
+# VSCode Development Image #
 #####################
 FROM dev as dev_vscode
 
-# Getting host's env variables at build time and storing them as ARGs
-ARG MAIN_FOLDER_NAME
-ARG USERNAME
-ARG UID
-ARG GID
-
-# Set the environment variable to prevent interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Install VSCode dependencies
 RUN sudo apt-get update && \
     sudo apt-get install -y \
     wget \
-    gpg 
-
-RUN sudo apt-get update && \
-    sudo apt-get install -y \
+    gpg \
     libasound2 \
     libatk-bridge2.0-0 \
     libatk1.0-0 \
@@ -112,17 +95,18 @@ RUN sudo apt-get update && \
     libxkbcommon0 \
     libxkbfile1 \
     libxrandr2 \
-    xdg-utils 
+    xdg-utils && \
+    sudo rm -rf /var/lib/apt/lists/*
 
-# Install vscode
-RUN sudo rm -rf /var/lib/apt/lists/* \
-   && wget -O vscode.deb https://go.microsoft.com/fwlink/?LinkID=760868 \
-   && echo "code code/add-microsoft-repo boolean true" | sudo debconf-set-selections \
+# Install VSCode
+RUN wget -O vscode.deb https://go.microsoft.com/fwlink/?LinkID=760868 \
    && sudo apt install apt-transport-https \
    && sudo apt update \
    && sudo dpkg -i vscode.deb \
-   && echo "alias code='code --no-sandbox'" >> ~/.bashrc \
-   && rm -rf vscode.deb
+   && sudo rm -rf vscode.deb
+
+# Add VSCode alias in the user's home directory bashrc
+RUN echo "alias code='code --no-sandbox'" >> "/home/${USERNAME}/.bashrc"
 
 # Install Python extension for VSCode
 RUN /usr/share/code/bin/code --install-extension ms-python.python

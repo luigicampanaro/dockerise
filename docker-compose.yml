@@ -15,12 +15,12 @@ services:
     network_mode: "host"
     tty: true
     volumes:
-     - "../src:/${MAIN_FOLDER_NAME}/src"
-     - "../data:/${MAIN_FOLDER_NAME}/data"
-     - "../logs:/${MAIN_FOLDER_NAME}/logs"
+     - "../src:/home/${USERNAME}/${MAIN_FOLDER_NAME}/src"
+     - "../data:/home/${USERNAME}/${MAIN_FOLDER_NAME}/data"
+     - "../logs:/home/${USERNAME}/${MAIN_FOLDER_NAME}/logs"
      - /tmp/.X11-unix:/tmp/.X11-unix:rw
      - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
-    working_dir: "/${MAIN_FOLDER_NAME}"
+    working_dir: "/home/${USERNAME}/${MAIN_FOLDER_NAME}"
     environment:
      - NVIDIA_VISIBLE_DEVICES=all
      - DISPLAY=${DISPLAY}

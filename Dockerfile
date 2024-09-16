@@ -10,12 +10,12 @@ ARG UID
 ARG GID
 
 # Create directories using the argument
-RUN mkdir -p ${MAIN_FOLDER_NAME}/src \
-    ${MAIN_FOLDER_NAME}/data \
-    ${MAIN_FOLDER_NAME}/logs
+RUN mkdir -p "${MAIN_FOLDER_NAME}/src" \
+    "${MAIN_FOLDER_NAME}/data" \
+    "${MAIN_FOLDER_NAME}/logs"
 
 # Set the working directory to MAIN_FOLDER_NAME
-WORKDIR /${MAIN_FOLDER_NAME}
+WORKDIR "/${MAIN_FOLDER_NAME}"
 
 # Set the shell to /bin/bash for running commands with Bash syntax and features, instead of sh
 SHELL ["/bin/bash", "-c"]
@@ -61,15 +61,15 @@ RUN apt-get update \
    && apt-get install -y sudo \
    && rm -rf /var/lib/apt/lists/* \
    && addgroup --gid ${GID} ${USERNAME} \
-   && adduser --disabled-password --gecos '' --uid ${UID} --gid ${GID} ${USERNAME} \
-   && echo ${USERNAME} ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/${USERNAME} \
-   && chown -R ${UID}:${GID} /${MAIN_FOLDER_NAME}
+   && adduser --disabled-password --gecos '' --uid ${UID} --gid ${GID} "${USERNAME}" \
+   && echo ${USERNAME} ALL=\(root\) NOPASSWD:ALL > "/etc/sudoers.d/${USERNAME}" \
+   && chown -R ${UID}:${GID} "/${MAIN_FOLDER_NAME}"
 
 # Allowing for interactions
 ENV DEBIAN_FRONTEND=dialog
 
 # switches the active user from the default root user to the user specified by the developer user
-USER ${USERNAME}
+USER "${USERNAME}"
 
 RUN sudo apt-get update
 

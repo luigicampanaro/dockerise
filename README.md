@@ -78,8 +78,9 @@ docker ps -a
 
 Then, use the correct `CONTAINER ID` to connect to the container:
 
+```bash
 docker exec -it <CONTAINER ID> /bin/bash
-
+```
 
 ### 6. Access VSCode
 Once inside the container, you can access VSCode by running:

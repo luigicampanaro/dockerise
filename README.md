@@ -33,7 +33,7 @@ cd my_ml_project
 Clone this repository into the newly created directory:
 
 ```bash
-git clone <repository-url> .
+git clone https://github.com/luigicampanaro/dockerise.git
 ```
 
 ### 3. Make the Script Executable
@@ -41,6 +41,7 @@ Before running the `init_project.sh` script, make it executable:
 
 
 ```bash
+cd dockerise
 chmod +x init_project.sh
 ```
 
@@ -69,11 +70,28 @@ This will:
 - Mount your `src`, `data`, and `logs` directories into the container. 🔗
 - Allow you to interact with VSCode and other tools inside the container. 🛠️
 
+To check that the container is running, use:
+
+```bash
+docker ps -a
+```
+
+Then, use the correct `CONTAINER ID` to connect to the container:
+
+docker exec -it <CONTAINER ID> /bin/bash
+
+
 ### 6. Access VSCode
-In your container, you can access VSCode by running:
+Once inside the container, you can access VSCode by running:
 
 ```bash
 code
+```
+
+You can check the GPU setup by typing:
+
+```bash
+nvidia-smi
 ```
 
 ### 7. Working with Your Project
@@ -86,6 +104,9 @@ The Dockerfile sets up a multi-stage build process:
 - Base Image: Starts with the PyTorch 2.4.1 image with CUDA 12.4 and cuDNN 9 on Ubuntu 22.04 and installs essential utilities. 🖥️
 - Development Image: Adds development tools (e.g. vim, htop, etc). 🛠️
 - VSCode Image: Installs VSCode and necessary dependencies. 💡
+
+## 🔍 Acknowledgments
+This project was freely inspired by the [docker-for-robotics](https://github.com/2b-t/docker-for-robotics) repository. Thank you to the creators for their work and ideas.
 
 ### 📜 License
 This project is licensed under the [MIT License](https://opensource.org/licenses/MIT). See the LICENSE file for details. 📝

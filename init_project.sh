@@ -4,6 +4,10 @@
 PARENT_DIR=$(dirname "$(pwd)")
 MAIN_FOLDER_NAME=$(basename "$PARENT_DIR")
 
+# Convert MAIN_FOLDER_NAME to a Docker-compatible format
+# Replace spaces with underscores, convert to lowercase
+DOCKER_COMPATIBLE_CONTAINER_NAME=$(echo "$MAIN_FOLDER_NAME" | tr '[:upper:]' '[:lower:]' | tr -s ' ' '_')
+
 # Export the environment variable
 export PARENT_DIR
 
@@ -18,6 +22,7 @@ MAIN_FOLDER_NAME=$MAIN_FOLDER_NAME
 USERNAME=$USERNAME
 UID=$USER_UID
 GID=$USER_GID
+DOCKER_COMPATIBLE_CONTAINER_NAME=$DOCKER_COMPATIBLE_CONTAINER_NAME
 EOF
 
 # Create the folders in the main project directory

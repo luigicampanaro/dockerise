@@ -10,8 +10,8 @@ services:
         UID: ${UID}
         GID: ${GID}
         MAIN_FOLDER_NAME: ${MAIN_FOLDER_NAME}
-    container_name: "${MAIN_FOLDER_NAME}_container"
-    image: "${MAIN_FOLDER_NAME}:v1.0"
+    container_name: "${DOCKER_COMPATIBLE_CONTAINER_NAME}_container"
+    image: "${DOCKER_COMPATIBLE_CONTAINER_NAME}:v1.0"
     network_mode: "host"
     tty: true
     volumes:

@@ -1,7 +1,7 @@
 ##############
 # Base image #
 ##############
-FROM pytorch/pytorch:2.4.1-cuda12.4-cudnn9-devel as base
+FROM nvcr.io/nvidia/pytorch:24.08-py3 as base
 
 # Getting host's env variables at build time and storing them as ARGs
 ARG MAIN_FOLDER_NAME

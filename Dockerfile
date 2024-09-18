@@ -108,8 +108,9 @@ RUN wget -O vscode.deb https://go.microsoft.com/fwlink/?LinkID=760868 \
 # Add VSCode alias in the user's home directory bashrc
 RUN echo "alias code='code --no-sandbox'" >> "/home/${USERNAME}/.bashrc"
 
-# Install Python extension for VSCode
-RUN /usr/share/code/bin/code --install-extension ms-python.python
+# Install extensions for VSCode
+RUN /usr/share/code/bin/code --install-extension ms-python.python # Python
+RUN /usr/share/code/bin/code --install-extension zeshuaro.vscode-python-poetry # Poetry
 
 # Allowing for interactions
 ENV DEBIAN_FRONTEND=dialog

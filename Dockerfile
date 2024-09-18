@@ -111,6 +111,7 @@ RUN echo "alias code='code --no-sandbox'" >> "/home/${USERNAME}/.bashrc"
 # Install extensions for VSCode
 RUN /usr/share/code/bin/code --install-extension ms-python.python # Python
 RUN /usr/share/code/bin/code --install-extension zeshuaro.vscode-python-poetry # Poetry
+RUN /usr/share/code/bin/code --install-extension LittleFoxTeam.vscode-python-test-adapter
 
 # Allowing for interactions
 ENV DEBIAN_FRONTEND=dialog

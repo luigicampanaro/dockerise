@@ -113,5 +113,13 @@ RUN /usr/share/code/bin/code --install-extension ms-python.python # Python
 RUN /usr/share/code/bin/code --install-extension zeshuaro.vscode-python-poetry # Poetry
 RUN /usr/share/code/bin/code --install-extension LittleFoxTeam.vscode-python-test-adapter
 
+# Set auto-saving for VSCode
+RUN echo '{ \
+        "files.autoSave": "afterDelay", \
+        "files.autoSaveDelay": 1000, \
+        "python.testing.pytestEnabled": true, \
+        "python.testing.unittestEnabled": false \
+         }' > /home/${USERNAME}/.config/Code/User/settings.json
+    
 # Allowing for interactions
 ENV DEBIAN_FRONTEND=dialog

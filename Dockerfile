@@ -40,8 +40,8 @@ ENV PATH="/home/${USERNAME}/.local/bin:$PATH"
 # Switch to the non-root user
 USER "${USERNAME}"
 
-# Install PDM for Python package management
-RUN pip install --user pdm
+# Install poetry for Python package management
+RUN pip install poetry
 
 # Set the working directory to the main project folder (inside the user home directory)
 WORKDIR "/home/${USERNAME}/${MAIN_FOLDER_NAME}"

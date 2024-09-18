@@ -96,7 +96,7 @@ nvidia-smi
 ```
 
 ### 7. Working with Your Project
-1. Clone Repositories: Inside the container, clone your ML repositories into the src folder. These are volumes mounted in Docker, so changes will be reflected in your host system. 🔄
+1. Clone Repositories: From outside the container, clone your ML repositories into the `src` folder. These are volumes mounted in Docker, so changes will be reflected in your host system. 🔄
 2. Develop and Train Models: Use the pre-configured environment to start developing and training your models. 🧠💻
 
 ### Dockerfile Overview
